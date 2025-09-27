@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Audit Logs</title>
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <style>
+        body {
+            padding: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <h2>Audit Logs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Action</th>
+                <th>Target</th>
+                <th>Status</th>
+                <th>Remarks</th>
+                <th>Timestamp</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="log : ${auditLogs}">
+                <td th:text="${log.id}">1</td>
+                <td th:text="${log.username}">username</td>
+                <td th:text="${log.action}">ACTION</td>
+                <td th:text="${log.target}">TARGET</td>
+                <td th:text="${log.status}">STATUS</td>
+                <td th:text="${log.remarks}">Remarks</td>
+                <td th:text="${#temporals.format(log.timestamp, 'dd-MM-yyyy HH:mm:ss')}">27-09-2025 20:53:00</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

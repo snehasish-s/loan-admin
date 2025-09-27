@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${projectTitle}">SBI Loan Utilization Tracking - Officer Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* SBI Color Palette */
+        :root {
+            --sbi-blue: #0A3C93; /* Primary Deep Blue (Similar to official logo/site) */
+            --sbi-dark: #072e6f; /* Darker blue for backgrounds/footers */
+            --sbi-light: #f5f5f5; /* Off-white for background */
+            --sbi-accent: #008cd2; /* Lighter/Cyan Blue for accents */
+            --sbi-text: #333333; /* Dark text */
+            --sbi-text-light: #ffffff; /* Light text */
+            --shadow-color: rgba(0, 60, 147, 0.2); /* Blue shadow */
+        }
+        
+        body {
+            background-color: var(--sbi-light);
+            color: var(--sbi-text);
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* * 1. NAVIGATION BAR STYLING
+         */
+        .navbar-sbi {
+            background-color: var(--sbi-blue) !important;
+            box-shadow: 0 4px 15px var(--shadow-color);
+            border-bottom: 3px solid var(--sbi-accent);
+        }
+
+        .navbar-sbi .navbar-brand {
+            color: var(--sbi-text-light) !important;
+            font-weight: 700;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar-sbi .nav-link {
+            color: rgba(255, 255, 255, 0.8) !important;
+            font-weight: 500;
+            margin-left: 15px;
+            transition: color 0.2s, background-color 0.2s;
+            border-radius: 5px;
+        }
+
+        .navbar-sbi .nav-link:hover {
+            color: var(--sbi-text-light) !important;
+            background-color: var(--sbi-dark);
+        }
+        
+        /* SBI Logo (Blue circle with a white keyhole/slit) */
+        .sbi-logo-container {
+            width: 40px; 
+            height: 40px; 
+            min-width: 40px;
+            margin-right: 10px; 
+            display: inline-flex; 
+            align-items: center;
+            justify-content: center;
+            animation: logoFloat 5s ease-in-out infinite;
+        }
+        
+        .sbi-logo-container svg {
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.4));
+        }
+        
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* * 2. MAIN CONTENT STYLING
+         */
+        .project-description {
+            padding: 30px;
+            background: var(--sbi-text-light);
+            border-radius: 8px;
+            margin-top: 30px;
+            box-shadow: 0 4px 12px var(--shadow-color);
+            border-left: 5px solid var(--sbi-blue);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .project-description::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(10, 60, 147, 0.1), transparent);
+            transition: left 0.7s ease;
+        }
+        
+        .project-description:hover::before {
+            left: 100%;
+        }
+        
+        .project-description h4 {
+            color: var(--sbi-blue);
+            font-weight: 600;
+            border-bottom: 2px solid var(--sbi-light);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .operation-card {
+            background: var(--sbi-text-light);
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: var(--sbi-text);
+            padding: 2rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 1px solid var(--sbi-light);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .operation-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(10, 60, 147, 0.1) 0%, rgba(0, 140, 210, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .operation-card:hover::before {
+            opacity: 1;
+        }
+        
+        .operation-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px var(--shadow-color);
+            border-color: var(--sbi-accent);
+            background-color: #eaf3ff; /* Very light blue hover */
+        }
+        
+        .operation-card .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--sbi-blue); 
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .operation-card:hover .icon {
+            color: var(--sbi-accent);
+            transform: scale(1.1) rotate(5deg);
+        }
+        
+        .operation-card h5 {
+            font-weight: 600;
+            color: var(--sbi-blue);
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .operation-card p {
+            position: relative;
+            z-index: 2;
+        }
+
+        .text-center {
+            color: var(--sbi-blue);
+            font-weight: 700;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .text-center::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 3px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--sbi-accent);
+            transition: width 0.5s ease;
+        }
+        
+        .text-center:hover::after {
+            width: 100%;
+        }
+        
+        /* * 3. ANIMATIONS - Enhanced with more sophisticated effects
+         */
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+        
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Pulse animation for important elements */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(10, 60, 147, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(10, 60, 147, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(10, 60, 147, 0);
+            }
+        }
+        
+        /* Floating animation for cards */
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* Background animation */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(10, 60, 147, 0.05) 0%, rgba(255, 255, 255, 0) 70%);
+            animation: rotate 30s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* * 4. FOOTER
+         */
+        footer {
+            margin-top: 60px;
+            padding: 20px;
+            background-color: var(--sbi-dark);
+            color: var(--sbi-text-light);
+            text-align: center;
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 15px var(--shadow-color);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--sbi-blue), var(--sbi-accent), var(--sbi-blue));
+            animation: slide 3s linear infinite;
+        }
+        
+        @keyframes slide {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .navbar-sbi .navbar-brand {
+                font-size: 1.2rem;
+            }
+        }
+        
+        /* Fix for the single card in a 3-column layout on large screens */
+        @media (min-width: 992px) {
+            .offset-lg-2-5 {
+                margin-left: calc(100% * 1/12); /* 1/12 of the container width to center a single col-lg-4 */
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation"></div>
+    
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top navbar-sbi">
+        <div class="container-fluid container">
+            <a class="navbar-brand" th:href="@{/}">
+                <div class="sbi-logo-container">
+                    <svg width="40" height="40" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="25" cy="25" r="25" fill="white"/>
+                        <circle cx="25" cy="25" r="22" fill="var(--sbi-blue)"/>
+                        <path d="M15 25C15 19.4772 19.4772 15 25 15C30.5228 15 35 19.4772 35 25C35 30.5228 30.5228 35 25 35C19.4772 35 15 30.5228 15 25Z" fill="white"/>
+                        <rect x="23" y="20" width="4" height="10" fill="var(--sbi-blue)"/>
+                    </svg>
+                </div>
+                <span th:text="${projectTitle}">Loan Utilization Tracking</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}"><i class="bi bi-speedometer2 me-1"></i> Dashboard</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/reports}"><i class="bi bi-bar-chart-fill me-1"></i> Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/profile}"><i class="bi bi-person-circle me-1"></i> My Profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/logout}"><i class="bi bi-box-arrow-right me-1"></i> Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container mt-5">
+        <div class="project-description fade-in" style="animation-delay: 0.2s;">
+            <h4>Project Overview</h4>
+            <p>This system empowers Bank Officers to monitor and approve beneficiary loan utilization efficiently. Beneficiaries submit geo-tagged photos/videos via a mobile app. AI-assisted fraud detection helps validate submissions, and officers can approve or reject transactions with real-time wallet updates.
+            Disclaimer:
+This demo is strictly for educational and demonstration purposes. We do not intend to hack or compromise any website. The application showcased here is a local project, and you can find the full source code on our GitHub repository
+ for review.</p>
+        </div>
+
+        <h3 class="text-center my-5 fade-in" style="animation-delay: 0.4s;">Officer Operations</h3>
+        <div class="row g-4">
+            
+            <div class="col-md-6 col-lg-4">
+                <a th:href="@{/add-beneficiary}" class="operation-card fade-in-up float" style="animation-delay: 0.5s;">
+                    <i class="bi bi-person-plus-fill icon"></i>
+                    <h5>Add Beneficiary</h5>
+                    <p class="small mt-2 mb-0">Register new beneficiaries securely into the system.</p>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a th:href="@{/pending-transactions}" class="operation-card fade-in-up float" style="animation-delay: 0.6s; animation-duration: 7s;">
+                    <i class="bi bi-clock-history icon"></i>
+                    <h5>View Pending Transactions</h5>
+                    <p class="small mt-2 mb-0">Check queued loan utilization submissions for review.</p>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a th:href="@{/approve-reject}" class="operation-card fade-in-up float pulse" style="animation-delay: 0.7s; animation-duration: 8s;">
+                    <i class="bi bi-check2-circle icon"></i>
+                    <h5>Approve / Reject Transactions</h5>
+                    <p class="small mt-2 mb-0">Review AI-assisted decisions with manual override capability.</p>
+                </a>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <a th:href="@{/wallet-balances}" class="operation-card fade-in-up float" style="animation-delay: 0.8s; animation-duration: 6.5s;">
+                    <i class="bi bi-wallet2 icon"></i>
+                    <h5>View Wallet Balances</h5>
+                    <p class="small mt-2 mb-0">Monitor real-time beneficiary loan wallet information.</p>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a th:href="@{/reports}" class="operation-card fade-in-up float" style="animation-delay: 0.9s; animation-duration: 7.5s;">
+                    <i class="bi bi-bar-chart-fill icon"></i>
+                    <h5>Generate Reports</h5>
+                    <p class="small mt-2 mb-0">Access custom analytics and export options for data insights.</p>
+                </a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a th:href="@{/view-transaction-details}" class="operation-card fade-in-up float" style="animation-delay: 1.0s; animation-duration: 6s;">
+                    <i class="bi bi-card-list icon"></i>
+                    <h5>View Transaction Details</h5>
+                    <p class="small mt-2 mb-0">See photos, videos, metadata, and AI fraud scores.</p>
+                </a>
+            </div>
+            
+            <div class="col-md-6 col-lg-4 mx-auto">
+                <a th:href="@{/audit-logs}" class="operation-card fade-in-up float" style="animation-delay: 1.1s; animation-duration: 7s;">
+                    <i class="bi bi-file-earmark-text icon"></i>
+                    <h5>Audit Logs</h5>
+                    <p class="small mt-2 mb-0">Review all officer actions for accountability and compliance.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p class="mb-0">Demo Web Admin – Hackathon SIH25149 | Secure Banking Solutions</p>
+       
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Staggered animation for operation cards
+            const cards = document.querySelectorAll('.operation-card');
+            cards.forEach((card, index) => {
+                // Already using CSS animation delays, but we can add additional effects
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-10px) scale(1.02)';
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(-5px)';
+                });
+            });
+            
+            // Add scroll animation for elements
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe elements that should animate on scroll
+            const animatedElements = document.querySelectorAll('.fade-in-up');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
